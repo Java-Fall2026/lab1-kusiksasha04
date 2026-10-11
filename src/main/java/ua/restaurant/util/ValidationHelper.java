@@ -1,13 +1,9 @@
 package ua.restaurant.util;
 
-import java.util.List;
-
 final class ValidationHelper {
 
     static final int TABLE_NUMBER_MAX = 200;
     static final int CAPACITY_MAX = 20;
-    static final List<String> ZONES = List.of("MAIN_HALL", "TERRACE", "VIP", "BAR");
-    static final List<String> STATUSES = List.of("PENDING", "CONFIRMED", "SEATED", "COMPLETED", "CANCELLED");
 
     private ValidationHelper() {
     }
@@ -47,10 +43,4 @@ final class ValidationHelper {
         return value;
     }
 
-    static String requireOneOf(String value, List<String> allowed, String field) {
-        if (!allowed.contains(value)) {
-            throw new IllegalArgumentException(field + " must be one of " + allowed + ", got: " + value);
-        }
-        return value;
-    }
 }

@@ -2,6 +2,7 @@ package ua.restaurant.util;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.Locale;
 
 import ua.restaurant.model.Reservation;
 import ua.restaurant.model.ReservationStatus;
@@ -28,7 +29,7 @@ public final class RestaurantUtils {
 
     public static String validateEmail(String email) {
         ValidationHelper.requireNotBlank(email, "Email");
-        String normalized = email.trim().toLowerCase();
+        String normalized = email.trim().toLowerCase(Locale.ROOT);
         if (!normalized.contains("@")) {
             throw new IllegalArgumentException("Email must contain '@', got: " + normalized);
         }
@@ -41,16 +42,6 @@ public final class RestaurantUtils {
 
     public static int validateCapacity(int capacity) {
         return ValidationHelper.requireInRange(capacity, 1, ValidationHelper.CAPACITY_MAX, "Capacity");
-    }
-
-    public static String validateZone(String zone) {
-        ValidationHelper.requireNotBlank(zone, "Zone");
-        return ValidationHelper.requireOneOf(FormatHelper.normalize(zone), ValidationHelper.ZONES, "Zone");
-    }
-
-    public static String validateStatus(String status) {
-        ValidationHelper.requireNotBlank(status, "Status");
-        return ValidationHelper.requireOneOf(FormatHelper.normalize(status), ValidationHelper.STATUSES, "Status");
     }
 
     public static int validateGuestCount(int guestCount, int tableCapacity) {
