@@ -2,9 +2,12 @@ package ua.restaurant.util;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.Locale;
 
 import ua.restaurant.model.Reservation;
+import ua.restaurant.model.ReservationStatus;
 import ua.restaurant.model.RestaurantOrder;
+import ua.restaurant.model.Zone;
 
 public final class RestaurantUtils {
 
@@ -26,7 +29,7 @@ public final class RestaurantUtils {
 
     public static String validateEmail(String email) {
         ValidationHelper.requireNotBlank(email, "Email");
-        String normalized = email.trim().toLowerCase();
+        String normalized = email.trim().toLowerCase(Locale.ROOT);
         if (!normalized.contains("@")) {
             throw new IllegalArgumentException("Email must contain '@', got: " + normalized);
         }
@@ -39,16 +42,6 @@ public final class RestaurantUtils {
 
     public static int validateCapacity(int capacity) {
         return ValidationHelper.requireInRange(capacity, 1, ValidationHelper.CAPACITY_MAX, "Capacity");
-    }
-
-    public static String validateZone(String zone) {
-        ValidationHelper.requireNotBlank(zone, "Zone");
-        return ValidationHelper.requireOneOf(FormatHelper.normalize(zone), ValidationHelper.ZONES, "Zone");
-    }
-
-    public static String validateStatus(String status) {
-        ValidationHelper.requireNotBlank(status, "Status");
-        return ValidationHelper.requireOneOf(FormatHelper.normalize(status), ValidationHelper.STATUSES, "Status");
     }
 
     public static int validateGuestCount(int guestCount, int tableCapacity) {
@@ -86,5 +79,25 @@ public final class RestaurantUtils {
 
     public static double finalAmount(RestaurantOrder order) {
         return order.getTotalAmount() - order.getDiscountAmount();
+    }
+
+    public static String zoneDescription(Zone zone) {
+        Zone checkedZone = requireNotNull(zone, "Zone");
+        return switch (checkedZone) {
+            case MAIN_HALL -> "Головна зала";
+            case TERRACE -> "Літня тераса";
+            case VIP -> "VIP-зал";
+            case BAR -> "Барна стійка";
+        };
+    }
+
+    public static String availableAction(ReservationStatus status) {
+        ReservationStatus checkedStatus = requireNotNull(status, "Status");
+        return switch (checkedStatus) {
+            case PENDING -> "Підтвердити або скасувати";
+            case CONFIRMED -> "Посадити гостей або скасувати";
+            case SEATED -> "Завершити обслуговування";
+            case COMPLETED, CANCELLED -> "Дій немає";
+        };
     }
 }

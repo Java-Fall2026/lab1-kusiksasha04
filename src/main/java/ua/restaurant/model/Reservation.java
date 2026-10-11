@@ -15,17 +15,17 @@ public class Reservation extends BaseEntity {
     private final LocalTime startTime;
     private final LocalTime endTime;
     private final int guestCount;
-    private String status;
+    private ReservationStatus status;
 
     public Reservation(Customer customer, RestaurantTable table, LocalDate reservationDate,
-                       LocalTime startTime, LocalTime endTime, int guestCount, String status) {
+                       LocalTime startTime, LocalTime endTime, int guestCount, ReservationStatus status) {
         super();
         this.customer = RestaurantUtils.requireNotNull(customer, "Customer");
         this.table = RestaurantUtils.requireNotNull(table, "Table");
         this.reservationDate = RestaurantUtils.requireNotNull(reservationDate, "Reservation date");
         this.startTime = RestaurantUtils.requireNotNull(startTime, "Start time");
         this.endTime = RestaurantUtils.validateEndTime(startTime, endTime);
-        this.guestCount = RestaurantUtils.validateGuestCount(guestCount, table.getCapacity());
+        this.guestCount = RestaurantUtils.validateGuestCount(guestCount, table.capacity());
         setStatus(status);
     }
 
@@ -53,12 +53,12 @@ public class Reservation extends BaseEntity {
         return guestCount;
     }
 
-    public String getStatus() {
+    public ReservationStatus getStatus() {
         return status;
     }
 
-    public final void setStatus(String status) {
-        this.status = RestaurantUtils.validateStatus(status);
+    public final void setStatus(ReservationStatus status) {
+        this.status = RestaurantUtils.requireNotNull(status, "Status");
     }
 
     @Override
@@ -82,9 +82,9 @@ public class Reservation extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Reservation{customer=" + customer.getPhone() + ", table=" + table.getTableNumber()
+        return "Reservation{customer=" + customer.phone() + ", table=" + table.tableNumber()
                 + ", reservationDate=" + reservationDate + ", startTime=" + startTime
                 + ", endTime=" + endTime + ", guestCount=" + guestCount
-                + ", status='" + status + "', createdAt=" + createdAt + "}";
+                + ", status=" + status + ", createdAt=" + createdAt + "}";
     }
 }
