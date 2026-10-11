@@ -4,7 +4,9 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 import ua.restaurant.model.Reservation;
+import ua.restaurant.model.ReservationStatus;
 import ua.restaurant.model.RestaurantOrder;
+import ua.restaurant.model.Zone;
 
 public final class RestaurantUtils {
 
@@ -86,5 +88,25 @@ public final class RestaurantUtils {
 
     public static double finalAmount(RestaurantOrder order) {
         return order.getTotalAmount() - order.getDiscountAmount();
+    }
+
+    public static String zoneDescription(Zone zone) {
+        Zone checkedZone = requireNotNull(zone, "Zone");
+        return switch (checkedZone) {
+            case MAIN_HALL -> "Головна зала";
+            case TERRACE -> "Літня тераса";
+            case VIP -> "VIP-зал";
+            case BAR -> "Барна стійка";
+        };
+    }
+
+    public static String availableAction(ReservationStatus status) {
+        ReservationStatus checkedStatus = requireNotNull(status, "Status");
+        return switch (checkedStatus) {
+            case PENDING -> "Підтвердити або скасувати";
+            case CONFIRMED -> "Посадити гостей або скасувати";
+            case SEATED -> "Завершити обслуговування";
+            case COMPLETED, CANCELLED -> "Дій немає";
+        };
     }
 }
