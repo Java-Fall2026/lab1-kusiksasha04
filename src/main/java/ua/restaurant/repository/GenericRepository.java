@@ -1,10 +1,12 @@
 package ua.restaurant.repository;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +78,34 @@ public class GenericRepository<T> {
 
     public int size() {
         return items.size();
+    }
+
+    public List<T> findAllSorted(Comparator<T> comparator) {
+        return items.values().stream()
+                .sorted(comparator)
+                .toList();
+    }
+
+    public List<T> findAllSortedByIdentity(SortOrder order) {
+        Comparator<String> byKey = order == SortOrder.ASC ? Comparator.naturalOrder() : Comparator.reverseOrder();
+        List<T> result = items.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(byKey))
+                .map(Map.Entry::getValue)
+                .toList();
+        return logResult("Sort by identity " + order, result);
+    }
+
+    public Stream<T> stream() {
+        return items.values().stream();
+    }
+
+    protected <R> List<R> logResult(String action, List<R> result) {
+        if (result.isEmpty()) {
+            log.warn("{} in repository '{}': nothing found", action, name);
+        } else {
+            log.info("{} in repository '{}': {} items", action, name, result.size());
+        }
+        return result;
     }
 
     private String identityOf(T item) {

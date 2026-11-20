@@ -5,7 +5,7 @@ import java.util.Objects;
 import ua.common.BaseEntity;
 import ua.restaurant.util.RestaurantUtils;
 
-public class RestaurantOrder extends BaseEntity {
+public class RestaurantOrder extends BaseEntity implements Comparable<RestaurantOrder> {
 
     private final String orderId;
     private final Reservation reservation;
@@ -38,6 +38,11 @@ public class RestaurantOrder extends BaseEntity {
 
     public final void setDiscountAmount(double discountAmount) {
         this.discountAmount = RestaurantUtils.validateDiscount(discountAmount, totalAmount);
+    }
+
+    @Override
+    public int compareTo(RestaurantOrder other) {
+        return orderId.compareTo(other.orderId);
     }
 
     @Override
