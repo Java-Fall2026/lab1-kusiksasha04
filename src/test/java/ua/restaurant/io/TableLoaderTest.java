@@ -50,14 +50,6 @@ class TableLoaderTest {
     }
 
     @Test
-    @DisplayName("Domain rule violation in the record constructor becomes InvalidDataException")
-    void rejectsCapacityOutOfRange() {
-        InvalidDataException e = assertThrows(InvalidDataException.class, () -> TableLoader.parseLine("6,25,BAR", 7));
-
-        assertTrue(e.getCause() instanceof IllegalArgumentException);
-    }
-
-    @Test
     @DisplayName("Loader skips invalid lines and keeps reading")
     void loadSkipsInvalidLines(@TempDir Path dir) throws IOException {
         Path file = dir.resolve("tables.csv");

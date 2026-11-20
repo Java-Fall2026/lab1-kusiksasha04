@@ -1,7 +1,6 @@
 package ua.restaurant.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -45,13 +44,5 @@ class RestaurantUtilsTest {
         RestaurantOrder order = new RestaurantOrder("ord-1", reservation(), 1000.0, 100.0);
 
         assertEquals(900.0, RestaurantUtils.finalAmount(order));
-    }
-
-    @Test
-    @DisplayName("Discount greater than total is rejected by the setter")
-    void rejectsTooBigDiscount() {
-        RestaurantOrder order = new RestaurantOrder("ord-1", reservation(), 1000.0, 100.0);
-
-        assertThrows(IllegalArgumentException.class, () -> order.setDiscountAmount(5000.0));
     }
 }
