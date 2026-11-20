@@ -4,9 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import ua.common.BaseEntity;
 import ua.restaurant.util.RestaurantUtils;
 
+@JsonIgnoreProperties("createdAt")
 public class Reservation extends BaseEntity {
 
     private final Customer customer;
@@ -17,8 +22,14 @@ public class Reservation extends BaseEntity {
     private final int guestCount;
     private ReservationStatus status;
 
-    public Reservation(Customer customer, RestaurantTable table, LocalDate reservationDate,
-                       LocalTime startTime, LocalTime endTime, int guestCount, ReservationStatus status) {
+    @JsonCreator
+    public Reservation(@JsonProperty("customer") Customer customer,
+                       @JsonProperty("table") RestaurantTable table,
+                       @JsonProperty("reservationDate") LocalDate reservationDate,
+                       @JsonProperty("startTime") LocalTime startTime,
+                       @JsonProperty("endTime") LocalTime endTime,
+                       @JsonProperty("guestCount") int guestCount,
+                       @JsonProperty("status") ReservationStatus status) {
         super();
         this.customer = RestaurantUtils.requireNotNull(customer, "Customer");
         this.table = RestaurantUtils.requireNotNull(table, "Table");
