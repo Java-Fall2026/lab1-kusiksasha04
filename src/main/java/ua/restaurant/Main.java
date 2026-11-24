@@ -88,7 +88,7 @@ public class Main {
         printOrders(orders.findByAmountRange(800, 1000));
         System.out.println("  Статус COMPLETED і сума від 850.5:");
         printOrders(orders.findByStatusAndMinAmount(ReservationStatus.COMPLETED, 850.5));
-        System.out.println("  Топ-2 клієнти за сумою: " + orders.findTopCustomerNames(2));
+        System.out.println("  2 клієнти за найбільшим окремим замовленням: " + orders.findCustomerNamesByLargestOrder(2));
 
         System.out.println("\n6. Результат, якого немає");
         String bigTable = tables.findFirstForGuests(25)

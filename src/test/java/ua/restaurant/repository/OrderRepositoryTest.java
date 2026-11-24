@@ -21,10 +21,14 @@ import ua.restaurant.model.Zone;
 class OrderRepositoryTest {
 
     private static RestaurantOrder order(String id, double amount) {
-        Customer customer = new Customer("+380501234567", "ivan petrenko", "ivan@mail.com");
+        return order(id, "ivan petrenko", amount, ReservationStatus.CONFIRMED);
+    }
+
+    private static RestaurantOrder order(String id, String customerName, double amount, ReservationStatus status) {
+        Customer customer = new Customer("+380501234567", customerName, "client@mail.com");
         RestaurantTable table = new RestaurantTable(12, 4, Zone.TERRACE);
         Reservation reservation = new Reservation(customer, table, LocalDate.of(2026, 10, 10),
-                LocalTime.of(18, 0), LocalTime.of(20, 0), 2, ReservationStatus.CONFIRMED);
+                LocalTime.of(18, 0), LocalTime.of(20, 0), 2, status);
         return new RestaurantOrder(id, reservation, amount, 0.0);
     }
 
@@ -55,6 +59,53 @@ class OrderRepositoryTest {
         orders.add(order("ORD-2", 850.90));
 
         assertEquals(List.of("ORD-2", "ORD-1"), ids(orders.sortByAmountDesc()));
+    }
+
+    @Test
+    @DisplayName("Search by customer name ignores letter case")
+    void findByCustomerNameIgnoresCase() {
+        OrderRepository orders = new OrderRepository();
+        orders.add(order("ORD-1", "ivan petrenko", 100.0, ReservationStatus.CONFIRMED));
+        orders.add(order("ORD-2", "olena koval", 200.0, ReservationStatus.CONFIRMED));
+
+        assertEquals(List.of("ORD-1"), ids(orders.findByCustomerName("IVAN")));
+        assertEquals(List.of("ORD-1"), ids(orders.findByCustomerName("petrenko")));
+    }
+
+    @Test
+    @DisplayName("Search by amount range includes both bounds and excludes values just outside")
+    void findByAmountRange() {
+        OrderRepository orders = new OrderRepository();
+        orders.add(order("ORD-1", 99.99));
+        orders.add(order("ORD-2", 100.0));
+        orders.add(order("ORD-3", 150.0));
+        orders.add(order("ORD-4", 200.0));
+        orders.add(order("ORD-5", 200.01));
+
+        assertEquals(List.of("ORD-2", "ORD-3", "ORD-4"), ids(orders.findByAmountRange(100.0, 200.0)));
+    }
+
+    @Test
+    @DisplayName("Search by status and amount skips orders matching only one condition")
+    void findByStatusAndMinAmount() {
+        OrderRepository orders = new OrderRepository();
+        orders.add(order("ORD-1", "ivan petrenko", 500.0, ReservationStatus.COMPLETED));
+        orders.add(order("ORD-2", "ivan petrenko", 100.0, ReservationStatus.COMPLETED));
+        orders.add(order("ORD-3", "ivan petrenko", 500.0, ReservationStatus.PENDING));
+
+        assertEquals(List.of("ORD-1"), ids(orders.findByStatusAndMinAmount(ReservationStatus.COMPLETED, 300.0)));
+    }
+
+    @Test
+    @DisplayName("Customer names by largest order are distinct and limited")
+    void findCustomerNamesByLargestOrder() {
+        OrderRepository orders = new OrderRepository();
+        orders.add(order("ORD-1", "ivan petrenko", 900.0, ReservationStatus.CONFIRMED));
+        orders.add(order("ORD-2", "ivan petrenko", 800.0, ReservationStatus.CONFIRMED));
+        orders.add(order("ORD-3", "olena koval", 700.0, ReservationStatus.CONFIRMED));
+        orders.add(order("ORD-4", "petro sydorenko", 600.0, ReservationStatus.CONFIRMED));
+
+        assertEquals(List.of("Ivan Petrenko", "Olena Koval"), orders.findCustomerNamesByLargestOrder(2));
     }
 
     @Test

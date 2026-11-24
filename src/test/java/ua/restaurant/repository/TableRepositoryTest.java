@@ -72,9 +72,16 @@ class TableRepositoryTest {
     }
 
     @Test
-    @DisplayName("Search by capacity range excludes values outside the range")
+    @DisplayName("Search by capacity range includes both bounds and excludes values just outside")
     void findByCapacityRange() {
-        assertEquals(List.of(1), numbers(tables.findByCapacityRange(3, 5)));
+        TableRepository repository = new TableRepository();
+        repository.add(new RestaurantTable(1, 2, Zone.BAR));
+        repository.add(new RestaurantTable(2, 3, Zone.BAR));
+        repository.add(new RestaurantTable(3, 4, Zone.BAR));
+        repository.add(new RestaurantTable(4, 5, Zone.BAR));
+        repository.add(new RestaurantTable(5, 6, Zone.BAR));
+
+        assertEquals(List.of(2, 3, 4), numbers(repository.findByCapacityRange(3, 5)));
     }
 
     @Test
