@@ -27,6 +27,10 @@ public final class RestaurantUtils {
         return FormatHelper.capitalize(name);
     }
 
+    public static String formatName(String name) {
+        return FormatHelper.capitalize(name);
+    }
+
     public static String validateEmail(String email) {
         ValidationHelper.requireNotBlank(email, "Email");
         String normalized = email.trim().toLowerCase(Locale.ROOT);

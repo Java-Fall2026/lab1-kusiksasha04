@@ -174,3 +174,25 @@
     status: PENDING
   totalAmount: 510.0
   discountAmount: 0.0
+- orderId: ORD-514
+  reservation:
+    customer: { phone: "+380631112244", name: Марія Бондар, email: maria@mail.com }
+    table: { tableNumber: 4, capacity: 4, zone: BAR }
+    reservationDate: 2026-11-13
+    startTime: "21:00"
+    endTime: "19:00"
+    guestCount: 2
+    status: PENDING
+  totalAmount: 380.0
+  discountAmount: 0.0
+- orderId: ORD-515
+  reservation:
+    customer: { phone: "+380671112233", name: Олена Коваль, email: olena@mail.com }
+    table: { tableNumber: 2, capacity: 2, zone: TERRACE }
+    reservationDate: 2026-11-14
+    startTime: "18:00"
+    endTime: "20:00"
+    guestCount: 5
+    status: CONFIRMED
+  totalAmount: 720.0
+  discountAmount: 0.0

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
@@ -70,6 +72,22 @@ class ValidationTest {
     void orderAnnotations(RestaurantOrder order, String field) {
         assertTrue(VALIDATOR.validate(order).stream()
                 .anyMatch(v -> v.getPropertyPath().toString().equals(field)));
+    }
+
+    @Test
+    @DisplayName("Reservation rule rejects end before start and more guests than capacity")
+    void consistentReservation() {
+        Customer customer = new Customer("+380501234567", "ivan petrenko", "ivan@mail.com");
+        RestaurantTable table = new RestaurantTable(2, 2, Zone.TERRACE);
+        Reservation invalid = new Reservation(customer, table, LocalDate.of(2026, 11, 2),
+                LocalTime.of(20, 0), LocalTime.of(18, 0), 5, ReservationStatus.PENDING);
+
+        Set<String> fields = VALIDATOR.validate(invalid).stream()
+                .map(v -> v.getPropertyPath().toString())
+                .collect(Collectors.toSet());
+
+        assertTrue(VALIDATOR.validate(reservation()).isEmpty());
+        assertTrue(fields.containsAll(Set.of("endTime", "guestCount")));
     }
 
     @Test

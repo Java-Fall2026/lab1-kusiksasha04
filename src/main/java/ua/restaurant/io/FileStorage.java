@@ -17,12 +17,12 @@ public class FileStorage<T> {
     }
 
     public List<T> load(Path file) throws IOException {
-        ObjectMapper mapper = DataFormat.fromPath(file).createMapper();
+        ObjectMapper mapper = DataFormat.fromPath(file).mapper();
         return mapper.readValue(file.toFile(), listType(mapper));
     }
 
     public void save(Path file, List<T> items) throws IOException {
-        ObjectMapper mapper = DataFormat.fromPath(file).createMapper();
+        ObjectMapper mapper = DataFormat.fromPath(file).mapper();
         if (file.getParent() != null) {
             Files.createDirectories(file.getParent());
         }

@@ -9,7 +9,16 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public enum DataFormat {
-    JSON, YAML;
+    JSON(new ObjectMapper()),
+    YAML(new YAMLMapper());
+
+    private final ObjectMapper mapper;
+
+    DataFormat(ObjectMapper mapper) {
+        this.mapper = mapper.registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .enable(SerializationFeature.INDENT_OUTPUT);
+    }
 
     public static DataFormat fromPath(Path file) {
         String name = file.getFileName().toString().toLowerCase(Locale.ROOT);
@@ -22,10 +31,7 @@ public enum DataFormat {
         throw new IllegalArgumentException("Unsupported file extension: " + file.getFileName());
     }
 
-    public ObjectMapper createMapper() {
-        ObjectMapper mapper = this == JSON ? new ObjectMapper() : new YAMLMapper();
-        return mapper.registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .enable(SerializationFeature.INDENT_OUTPUT);
+    public ObjectMapper mapper() {
+        return mapper;
     }
 }

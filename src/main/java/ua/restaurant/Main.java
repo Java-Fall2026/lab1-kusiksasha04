@@ -81,6 +81,6 @@ public class Main {
 
     private static void printRejected(Path file, LoadResult result) {
         result.rejected().forEach(r -> System.out.println("  " + file + " запис " + r.record()
-                + ", поле " + r.field() + ": " + r.message()));
+                + ": " + DataLoader.describe(r)));
     }
 }
