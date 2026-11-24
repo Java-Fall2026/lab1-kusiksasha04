@@ -27,7 +27,7 @@ public class GenericRepository<T> {
         this.extractor = extractor;
     }
 
-    public void add(T item) {
+    public synchronized void add(T item) {
         String identity = identityOf(item);
         if (items.containsKey(identity)) {
             log.error("Duplicate identity '{}' in repository '{}'", identity, name);
@@ -37,7 +37,7 @@ public class GenericRepository<T> {
         log.info("Added '{}' to repository '{}'", identity, name);
     }
 
-    public boolean addIfAbsent(T item) {
+    public synchronized boolean addIfAbsent(T item) {
         String identity = identityOf(item);
         if (items.putIfAbsent(identity, item) != null) {
             log.warn("Skipped duplicate '{}' in repository '{}'", identity, name);
@@ -47,7 +47,7 @@ public class GenericRepository<T> {
         return true;
     }
 
-    public void addAll(Collection<? extends T> newItems) {
+    public synchronized void addAll(Collection<? extends T> newItems) {
         int added = 0;
         for (T item : newItems) {
             String identity = identityOf(item);
@@ -60,7 +60,18 @@ public class GenericRepository<T> {
         log.info("Added {} of {} items to repository '{}'", added, newItems.size(), name);
     }
 
-    public boolean removeByIdentity(String identity) {
+    public synchronized boolean replace(T item) {
+        String identity = identityOf(item);
+        if (!items.containsKey(identity)) {
+            log.warn("Nothing to replace: '{}' not found in repository '{}'", identity, name);
+            return false;
+        }
+        items.put(identity, item);
+        log.info("Replaced '{}' in repository '{}'", identity, name);
+        return true;
+    }
+
+    public synchronized boolean removeByIdentity(String identity) {
         if (items.remove(identity) == null) {
             log.warn("Nothing to remove: '{}' not found in repository '{}'", identity, name);
             return false;
@@ -69,26 +80,26 @@ public class GenericRepository<T> {
         return true;
     }
 
-    public Optional<T> findByIdentity(String identity) {
+    public synchronized Optional<T> findByIdentity(String identity) {
         return Optional.ofNullable(items.get(identity));
     }
 
-    public List<T> findAll() {
+    public synchronized List<T> findAll() {
         return List.copyOf(items.values());
     }
 
-    public int size() {
+    public synchronized int size() {
         return items.size();
     }
 
-    public List<T> findAllSorted(Comparator<T> comparator) {
+    public synchronized List<T> findAllSorted(Comparator<T> comparator) {
         Objects.requireNonNull(comparator, "Comparator must not be null");
         return items.values().stream()
                 .sorted(comparator)
                 .toList();
     }
 
-    public List<T> findAllSortedByIdentity(SortOrder order) {
+    public synchronized List<T> findAllSortedByIdentity(SortOrder order) {
         Objects.requireNonNull(order, "Sort order must not be null");
         Comparator<String> byKey = order == SortOrder.ASC ? Comparator.naturalOrder() : Comparator.reverseOrder();
         List<T> result = items.entrySet().stream()
@@ -99,7 +110,7 @@ public class GenericRepository<T> {
     }
 
     public Stream<T> stream() {
-        return items.values().stream();
+        return findAll().stream();
     }
 
     protected <R> List<R> logResult(String action, List<R> result) {
@@ -111,7 +122,7 @@ public class GenericRepository<T> {
         return result;
     }
 
-    private String identityOf(T item) {
+    public String identityOf(T item) {
         if (item == null) {
             log.error("Null item passed to repository '{}'", name);
             throw new IllegalArgumentException("Item must not be null");

@@ -25,10 +25,23 @@ public class AppConfig {
     }
 
     public Path path(String key) {
+        return Path.of(value(key));
+    }
+
+    public int integer(String key) {
+        String value = value(key);
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Configuration key " + key + " must be an integer, got: " + value, e);
+        }
+    }
+
+    private String value(String key) {
         String value = properties.getProperty(key);
         if (value == null || value.isBlank()) {
             throw new IllegalStateException("Missing configuration key: " + key);
         }
-        return Path.of(value);
+        return value;
     }
 }
