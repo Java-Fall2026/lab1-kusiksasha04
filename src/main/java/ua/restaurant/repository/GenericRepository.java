@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -81,12 +82,14 @@ public class GenericRepository<T> {
     }
 
     public List<T> findAllSorted(Comparator<T> comparator) {
+        Objects.requireNonNull(comparator, "Comparator must not be null");
         return items.values().stream()
                 .sorted(comparator)
                 .toList();
     }
 
     public List<T> findAllSortedByIdentity(SortOrder order) {
+        Objects.requireNonNull(order, "Sort order must not be null");
         Comparator<String> byKey = order == SortOrder.ASC ? Comparator.naturalOrder() : Comparator.reverseOrder();
         List<T> result = items.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(byKey))

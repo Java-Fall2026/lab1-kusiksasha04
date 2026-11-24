@@ -57,14 +57,14 @@ public class OrderRepository extends GenericRepository<RestaurantOrder> {
         return logResult("Search by status " + status + " and amount >= " + minAmount, result);
     }
 
-    public List<String> findTopCustomerNames(int limit) {
+    public List<String> findCustomerNamesByLargestOrder(int limit) {
         List<String> result = stream()
                 .sorted(Comparator.comparingDouble(RestaurantOrder::getTotalAmount).reversed())
                 .map(order -> order.getReservation().getCustomer().name())
                 .distinct()
                 .limit(limit)
                 .toList();
-        return logResult("Search top " + limit + " customers by amount", result);
+        return logResult("Search " + limit + " customers by largest single order", result);
     }
 
     public double totalRevenue() {
