@@ -2,22 +2,46 @@ package ua.restaurant.model;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import ua.common.BaseEntity;
-import ua.restaurant.util.RestaurantUtils;
+import ua.restaurant.validation.DiscountNotGreaterThanTotal;
 
-public class RestaurantOrder extends BaseEntity {
+@DiscountNotGreaterThanTotal
+@JsonIgnoreProperties("createdAt")
+public class RestaurantOrder extends BaseEntity implements Comparable<RestaurantOrder> {
 
+    @NotBlank(message = "номер замовлення не може бути порожнім")
+    @Pattern(regexp = "ORD-\\d+", message = "номер замовлення має бути у форматі ORD-<число>")
     private final String orderId;
+
+    @NotNull(message = "бронювання є обов'язковим")
+    @Valid
     private final Reservation reservation;
+
+    @PositiveOrZero(message = "сума не може бути від'ємною")
     private final double totalAmount;
+
+    @PositiveOrZero(message = "знижка не може бути від'ємною")
     private double discountAmount;
 
-    public RestaurantOrder(String orderId, Reservation reservation, double totalAmount, double discountAmount) {
+    @JsonCreator
+    public RestaurantOrder(@JsonProperty("orderId") String orderId,
+                           @JsonProperty("reservation") Reservation reservation,
+                           @JsonProperty("totalAmount") double totalAmount,
+                           @JsonProperty("discountAmount") double discountAmount) {
         super();
-        this.orderId = RestaurantUtils.validateOrderId(orderId);
-        this.reservation = RestaurantUtils.requireNotNull(reservation, "Reservation");
-        this.totalAmount = RestaurantUtils.validateTotalAmount(totalAmount);
-        setDiscountAmount(discountAmount);
+        this.orderId = orderId;
+        this.reservation = reservation;
+        this.totalAmount = totalAmount;
+        this.discountAmount = discountAmount;
     }
 
     public String getOrderId() {
@@ -37,7 +61,12 @@ public class RestaurantOrder extends BaseEntity {
     }
 
     public final void setDiscountAmount(double discountAmount) {
-        this.discountAmount = RestaurantUtils.validateDiscount(discountAmount, totalAmount);
+        this.discountAmount = discountAmount;
+    }
+
+    @Override
+    public int compareTo(RestaurantOrder other) {
+        return orderId.compareTo(other.orderId);
     }
 
     @Override
@@ -48,7 +77,7 @@ public class RestaurantOrder extends BaseEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        return orderId.equals(((RestaurantOrder) o).orderId);
+        return Objects.equals(orderId, ((RestaurantOrder) o).orderId);
     }
 
     @Override

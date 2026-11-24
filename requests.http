@@ -1,0 +1,163 @@
+@host = http://localhost:8080
+
+### Столики: список (200)
+GET {{host}}/api/tables
+
+### Столики: фільтри, сортування, пагінація (200)
+GET {{host}}/api/tables?zone=hall&minCapacity=4&maxCapacity=10&sort=capacity&order=DESC&limit=5&offset=0
+
+### Столики: за номером (200)
+GET {{host}}/api/tables/1
+
+### Столики: агрегація за зонами (200)
+GET {{host}}/api/tables/stats
+
+### Столики: створити (201 + Location)
+POST {{host}}/api/tables
+Content-Type: application/json
+
+{ "tableNumber": 20, "capacity": 4, "zone": "BAR" }
+
+### Столики: оновити (200)
+PUT {{host}}/api/tables/20
+Content-Type: application/json
+
+{ "tableNumber": 20, "capacity": 6, "zone": "VIP" }
+
+### Столики: видалити (204)
+DELETE {{host}}/api/tables/20
+
+### Замовлення: список з фільтром за клієнтом (Іван) і діапазоном суми (200)
+GET {{host}}/api/orders?customer=%D0%86%D0%B2%D0%B0%D0%BD&minAmount=500&maxAmount=3000&sort=amount&order=DESC
+
+### Замовлення: за номером (200)
+GET {{host}}/api/orders/ORD-501
+
+### Замовлення: агрегація — загальна виручка (200)
+GET {{host}}/api/orders/stats
+
+### Замовлення: створити, кирилиця в імені (201 + Location)
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "orderId": "ORD-600",
+  "reservation": {
+    "customer": { "phone": "+380671112233", "name": "Олена Коваль", "email": "olena@mail.com" },
+    "table": { "tableNumber": 2, "capacity": 2, "zone": "TERRACE" },
+    "reservationDate": "2026-12-01",
+    "startTime": "19:00",
+    "endTime": "21:00",
+    "guestCount": 2,
+    "status": "PENDING"
+  },
+  "totalAmount": 640.0,
+  "discountAmount": 40.0
+}
+
+### Замовлення: оновити (200)
+PUT {{host}}/api/orders/ORD-600
+Content-Type: application/json
+
+{
+  "orderId": "ORD-600",
+  "reservation": {
+    "customer": { "phone": "+380671112233", "name": "Олена Коваль", "email": "olena@mail.com" },
+    "table": { "tableNumber": 2, "capacity": 2, "zone": "TERRACE" },
+    "reservationDate": "2026-12-01",
+    "startTime": "19:00",
+    "endTime": "21:00",
+    "guestCount": 2,
+    "status": "CONFIRMED"
+  },
+  "totalAmount": 700.0,
+  "discountAmount": 0.0
+}
+
+### Замовлення: видалити (204)
+DELETE {{host}}/api/orders/ORD-600
+
+### 400: валідація — неправильний номер і знижка більша за суму
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "orderId": "BAD",
+  "reservation": {
+    "customer": { "phone": "+380671112233", "name": "Олена Коваль", "email": "olena@mail.com" },
+    "table": { "tableNumber": 2, "capacity": 2, "zone": "TERRACE" },
+    "reservationDate": "2026-12-01",
+    "startTime": "21:00",
+    "endTime": "19:00",
+    "guestCount": 5,
+    "status": "PENDING"
+  },
+  "totalAmount": 500.0,
+  "discountAmount": 900.0
+}
+
+### 400: битий JSON
+POST {{host}}/api/tables
+Content-Type: application/json
+
+{ "tableNumber": 21, "capacity":
+
+### 400: невалідний параметр
+GET {{host}}/api/tables?limit=abc
+
+### 400: невідоме значення order
+GET {{host}}/api/tables?sort=capacity&order=SIDEWAYS
+
+### 400: невідомий параметр
+GET {{host}}/api/tables?color=red
+
+### 400: невідоме поле в тілі
+POST {{host}}/api/tables
+Content-Type: application/json
+
+{ "tableNumber": 22, "capacity": 4, "zone": "BAR", "color": "red" }
+
+### 400: номер у тілі не збігається зі шляхом
+PUT {{host}}/api/tables/1
+Content-Type: application/json
+
+{ "tableNumber": 2, "capacity": 4, "zone": "BAR" }
+
+### 404: столика немає
+GET {{host}}/api/tables/199
+
+### 404: оновлення відсутнього столика
+PUT {{host}}/api/tables/199
+Content-Type: application/json
+
+{ "tableNumber": 199, "capacity": 4, "zone": "BAR" }
+
+### 404: шляху немає
+GET {{host}}/api/unknown
+
+### 404: зайвий сегмент шляху
+GET {{host}}/api/tables/1/extra
+
+### 405: DELETE на колекцію
+DELETE {{host}}/api/tables
+
+### 405: POST на конкретний об'єкт
+POST {{host}}/api/tables/1
+Content-Type: application/json
+
+{ "tableNumber": 1, "capacity": 4, "zone": "BAR" }
+
+### 405: непідтримуваний метод
+PATCH {{host}}/api/tables/1
+
+### 409: дублікат
+POST {{host}}/api/tables
+Content-Type: application/json
+
+{ "tableNumber": 1, "capacity": 4, "zone": "MAIN_HALL" }
+
+### 415: не той Content-Type
+POST {{host}}/api/tables
+Content-Type: text/plain
+
+{ "tableNumber": 23, "capacity": 4, "zone": "BAR" }

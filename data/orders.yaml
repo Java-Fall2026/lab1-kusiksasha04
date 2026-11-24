@@ -1,0 +1,198 @@
+- orderId: ORD-501
+  reservation:
+    customer: { phone: "+380501234567", name: Іван Петренко, email: ivan@mail.com }
+    table: { tableNumber: 12, capacity: 4, zone: TERRACE }
+    reservationDate: 2026-11-02
+    startTime: "18:00"
+    endTime: "20:00"
+    guestCount: 3
+    status: CONFIRMED
+  totalAmount: 1200.0
+  discountAmount: 100.0
+- orderId: ORD-502
+  reservation:
+    customer: { phone: "+380671112233", name: Олена Коваль, email: olena@mail.com }
+    table: { tableNumber: 7, capacity: 6, zone: VIP }
+    reservationDate: 2026-11-01
+    startTime: "19:00"
+    endTime: "21:30"
+    guestCount: 5
+    status: COMPLETED
+  totalAmount: 850.4
+  discountAmount: 0.0
+- orderId: ORD-503
+  reservation:
+    customer: { phone: "+380931234567", name: Петро Сидоренко, email: petro@mail.com }
+    table: { tableNumber: 1, capacity: 4, zone: MAIN_HALL }
+    reservationDate: 2026-11-02
+    startTime: "12:00"
+    endTime: "13:30"
+    guestCount: 2
+    status: COMPLETED
+  totalAmount: 850.9
+  discountAmount: 50.0
+- orderId: ORD-504
+  reservation:
+    customer: { phone: "+380501234567", name: Іван Петренко, email: ivan@mail.com }
+    table: { tableNumber: 5, capacity: 8, zone: MAIN_HALL }
+    reservationDate: 2026-11-03
+    startTime: "18:00"
+    endTime: "22:00"
+    guestCount: 6
+    status: PENDING
+  totalAmount: 2300.0
+  discountAmount: 200.0
+- orderId: ""
+  reservation:
+    customer: { phone: "+380671112233", name: Олена Коваль, email: olena@mail.com }
+    table: { tableNumber: 2, capacity: 2, zone: TERRACE }
+    reservationDate: 2026-11-04
+    startTime: "14:00"
+    endTime: "15:00"
+    guestCount: 2
+    status: PENDING
+  totalAmount: 300.0
+  discountAmount: 0.0
+- orderId: ORD-505
+  reservation:
+    customer: { phone: "+380631112244", name: Марія Бондар, email: maria@mail.com }
+    table: { tableNumber: 3, capacity: 6, zone: VIP }
+    reservationDate: 2026-11-04
+    startTime: "20:00"
+    endTime: "23:00"
+    guestCount: 4
+    status: CONFIRMED
+  totalAmount: 3100.0
+  discountAmount: 300.0
+- orderId: ORD-506
+  reservation:
+    customer: { phone: "+380931234567", name: Петро Сидоренко, email: petro@mail.com }
+    table: { tableNumber: 4, capacity: 4, zone: BAR }
+    reservationDate: 2026-11-05
+    startTime: "21:00"
+    endTime: "23:00"
+    guestCount: 2
+    status: SEATED
+  totalAmount: 640.0
+  discountAmount: 0.0
+- orderId: ORDER-7
+  reservation:
+    customer: { phone: "+380501234567", name: Іван Петренко, email: ivan@mail.com }
+    table: { tableNumber: 6, capacity: 2, zone: BAR }
+    reservationDate: 2026-11-05
+    startTime: "19:00"
+    endTime: "20:00"
+    guestCount: 1
+    status: PENDING
+  totalAmount: 150.0
+  discountAmount: 0.0
+- orderId: ORD-507
+  reservation:
+    customer: { phone: "+380671112233", name: Олена Коваль, email: olena@mail.com }
+    table: { tableNumber: 8, capacity: 4, zone: TERRACE }
+    reservationDate: 2026-11-06
+    startTime: "13:00"
+    endTime: "14:30"
+    guestCount: 4
+    status: COMPLETED
+  totalAmount: 980.0
+  discountAmount: 80.0
+- orderId: ORD-508
+  reservation:
+    customer: { phone: "+380631112244", name: Марія Бондар, email: maria@mail.com }
+    table: { tableNumber: 9, capacity: 10, zone: MAIN_HALL }
+    reservationDate: 2026-11-07
+    startTime: "18:30"
+    endTime: "22:30"
+    guestCount: 9
+    status: CONFIRMED
+  totalAmount: 4500.0
+  discountAmount: 450.0
+- orderId: ORD-509
+  reservation:
+    customer: { phone: "+380931234567", name: Петро Сидоренко, email: petro@mail.com }
+    table: { tableNumber: 10, capacity: 4, zone: TERRACE }
+    reservationDate: 2026-11-08
+    startTime: "17:00"
+    endTime: "18:00"
+    guestCount: 2
+    status: CANCELLED
+  totalAmount: -100.0
+  discountAmount: 0.0
+- orderId: ORD-510
+  reservation:
+    customer: { phone: "+380501234567", name: Іван Петренко, email: ivan@mail.com }
+    table: { tableNumber: 11, capacity: 2, zone: BAR }
+    reservationDate: 2026-11-08
+    startTime: "20:00"
+    endTime: "21:00"
+    guestCount: 2
+    status: COMPLETED
+  totalAmount: 420.0
+  discountAmount: 20.0
+- orderId: ORD-511
+  reservation:
+    customer: { phone: "+380671112233", name: Олена Коваль, email: olena@mail.com }
+    table: { tableNumber: 7, capacity: 6, zone: VIP }
+    reservationDate: 2026-11-09
+    startTime: "19:00"
+    endTime: "22:00"
+    guestCount: 6
+    status: CONFIRMED
+  totalAmount: 500.0
+  discountAmount: 700.0
+- orderId: ORD-512
+  reservation:
+    customer: { phone: "+380631112244", name: Марія Бондар, email: maria@mail.com }
+    table: { tableNumber: 2, capacity: 2, zone: TERRACE }
+    reservationDate: 2026-11-10
+    startTime: "12:00"
+    endTime: "13:00"
+    guestCount: 2
+    status: PENDING
+  totalAmount: 260.0
+  discountAmount: 0.0
+- orderId: ORD-513
+  reservation:
+    customer: { phone: "+380931234567", name: Петро Сидоренко, email: petro@mail.com }
+    table: { tableNumber: 3, capacity: 6, zone: VIP }
+    reservationDate: 2026-11-11
+    startTime: "19:30"
+    endTime: "22:00"
+    guestCount: 5
+    status: CONFIRMED
+  totalAmount: 2750.0
+  discountAmount: 250.0
+- orderId: ORD-503
+  reservation:
+    customer: { phone: "+380501234567", name: Іван Петренко, email: ivan@mail.com }
+    table: { tableNumber: 12, capacity: 4, zone: TERRACE }
+    reservationDate: 2026-11-12
+    startTime: "18:00"
+    endTime: "19:00"
+    guestCount: 2
+    status: PENDING
+  totalAmount: 510.0
+  discountAmount: 0.0
+- orderId: ORD-514
+  reservation:
+    customer: { phone: "+380631112244", name: Марія Бондар, email: maria@mail.com }
+    table: { tableNumber: 4, capacity: 4, zone: BAR }
+    reservationDate: 2026-11-13
+    startTime: "21:00"
+    endTime: "19:00"
+    guestCount: 2
+    status: PENDING
+  totalAmount: 380.0
+  discountAmount: 0.0
+- orderId: ORD-515
+  reservation:
+    customer: { phone: "+380671112233", name: Олена Коваль, email: olena@mail.com }
+    table: { tableNumber: 2, capacity: 2, zone: TERRACE }
+    reservationDate: 2026-11-14
+    startTime: "18:00"
+    endTime: "20:00"
+    guestCount: 5
+    status: CONFIRMED
+  totalAmount: 720.0
+  discountAmount: 0.0

@@ -1,0 +1,18 @@
+[
+  { "tableNumber": 1, "capacity": 4, "zone": "MAIN_HALL" },
+  { "tableNumber": 2, "capacity": 2, "zone": "TERRACE" },
+  { "tableNumber": 3, "capacity": 6, "zone": "VIP" },
+  { "tableNumber": 4, "capacity": 4, "zone": "BAR" },
+  { "tableNumber": 5, "capacity": 8, "zone": "MAIN_HALL" },
+  { "tableNumber": 6, "capacity": 2, "zone": "BAR" },
+  { "tableNumber": 7, "capacity": 6, "zone": "VIP" },
+  { "tableNumber": 8, "capacity": 4, "zone": "TERRACE" },
+  { "tableNumber": 250, "capacity": 4, "zone": "BAR" },
+  { "tableNumber": 9, "capacity": 10, "zone": "MAIN_HALL" },
+  { "tableNumber": 10, "capacity": 4, "zone": "TERRACE" },
+  { "tableNumber": 13, "capacity": 0, "zone": "VIP" },
+  { "tableNumber": 11, "capacity": 2, "zone": "BAR" },
+  { "tableNumber": 14, "capacity": 4, "zone": null },
+  { "tableNumber": 12, "capacity": 4, "zone": "TERRACE" },
+  { "tableNumber": 5, "capacity": 6, "zone": "VIP" }
+]

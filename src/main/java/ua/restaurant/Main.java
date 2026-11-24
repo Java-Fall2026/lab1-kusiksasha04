@@ -1,75 +1,75 @@
 package ua.restaurant;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.nio.file.Path;
 
-import ua.restaurant.model.Customer;
-import ua.restaurant.model.Reservation;
-import ua.restaurant.model.ReservationStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
+import ua.restaurant.api.ApiServer;
+import ua.restaurant.io.AppConfig;
+import ua.restaurant.io.DataLoader;
+import ua.restaurant.io.FileStorage;
+import ua.restaurant.io.LoadResult;
+import ua.restaurant.model.RestaurantOrder;
 import ua.restaurant.model.RestaurantTable;
-import ua.restaurant.model.Zone;
-import ua.restaurant.util.RestaurantUtils;
+import ua.restaurant.repository.OrderRepository;
+import ua.restaurant.repository.TableRepository;
 
 public class Main {
 
-    public static void main(String[] args) {
-        System.out.println("1. Record-об'єкти та їх компоненти");
-        Customer customer = new Customer(" +380501234567 ", "  олександр петренко ", "Oleksandr@MAIL.com");
-        RestaurantTable table = new RestaurantTable(12, 4, Zone.TERRACE);
-        System.out.println("Клієнт: " + customer.name() + ", " + customer.phone() + ", " + customer.email());
-        System.out.println("Столик №" + table.tableNumber() + ", місць: " + table.capacity() + ", зона: " + table.zone());
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-        System.out.println("\n2. Enum");
-        for (Zone zone : Zone.values()) {
-            System.out.println(zone + ": коефіцієнт ціни " + zone.getPriceFactor());
+    public static void main(String[] args) throws Exception {
+        System.out.println("1. Читання конфігурації");
+        AppConfig config = AppConfig.load("app.properties");
+        int port = config.integer("server.port");
+        Path tablesFile = config.path("data.tables");
+        Path ordersFile = config.path("data.orders");
+        Path tablesOutput = config.path("output.tables");
+        Path ordersOutput = config.path("output.orders");
+        System.out.println("  Порт: " + port);
+        System.out.println("  Дані: " + tablesFile + ", " + ordersFile);
+        System.out.println("  Збереження: " + tablesOutput + ", " + ordersOutput);
+
+        System.out.println("\n2. Завантаження файлів");
+        TableRepository tables = new TableRepository();
+        OrderRepository orders = new OrderRepository();
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            DataLoader loader = new DataLoader(factory.getValidator());
+            printSummary(tablesFile, loader.load(tablesFile, RestaurantTable.class, tables));
+            printSummary(ordersFile, loader.load(ordersFile, RestaurantOrder.class, orders));
         }
-        for (ReservationStatus status : ReservationStatus.values()) {
-            System.out.println("Статус " + status + ", порядковий номер " + status.ordinal());
-        }
+
+        System.out.println("\n3. Запуск сервера");
+        ApiServer server = new ApiServer(port, tables, orders);
+        server.start();
+        String address = "http://localhost:" + server.port();
+        System.out.println("  Сервер працює: " + address + "/api/tables і " + address + "/api/orders");
+        System.out.println("  Для зупинки натисніть Ctrl+C");
+        log.info("Server started at {}", address);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(server, tables, orders, tablesOutput, ordersOutput)));
+    }
+
+    private static void shutdown(ApiServer server, TableRepository tables, OrderRepository orders,
+                                 Path tablesOutput, Path ordersOutput) {
+        System.out.println("\n4. Зупинка сервера та збереження даних");
         try {
-            Zone.valueOf("GARDEN");
-        } catch (IllegalArgumentException e) {
-            System.out.println("valueOf(\"GARDEN\"): " + e.getMessage());
+            server.stop();
+            new FileStorage<>(RestaurantTable.class).save(tablesOutput, tables.findAll());
+            new FileStorage<>(RestaurantOrder.class).save(ordersOutput, orders.findAll());
+            System.out.println("  Збережено столиків: " + tables.size() + " у " + tablesOutput);
+            System.out.println("  Збережено замовлень: " + orders.size() + " у " + ordersOutput);
+            log.info("Server stopped, saved {} tables and {} orders", tables.size(), orders.size());
+        } catch (Exception e) {
+            log.error("Failed to stop server or save data", e);
         }
+    }
 
-        System.out.println("\n3. Switch-вирази");
-        for (Zone zone : Zone.values()) {
-            System.out.println(zone + " -> " + RestaurantUtils.zoneDescription(zone));
-        }
-        Reservation reservation = new Reservation(customer, table, LocalDate.of(2026, 10, 10),
-                LocalTime.of(18, 0), LocalTime.of(20, 30), 3, ReservationStatus.PENDING);
-        for (ReservationStatus status : ReservationStatus.values()) {
-            reservation.setStatus(status);
-            System.out.println(status + " -> " + RestaurantUtils.availableAction(reservation.getStatus()));
-        }
-
-        System.out.println("\n4. Record з невалідними даними");
-        try {
-            new RestaurantTable(250, 4, Zone.BAR);
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-            new Customer("+380931234567", "Марія", "maria-mail.com");
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-            new RestaurantTable(5, 4, null);
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-
-        System.out.println("\n5. equals і hashCode, згенеровані компілятором");
-        Customer same1 = new Customer("+380671112233", "Іван", "ivan@mail.com");
-        Customer same2 = new Customer("+380671112233", "Іван", "ivan@mail.com");
-        Customer samePhone = new Customer("+380671112233", "Іван Петрович", "ivan@mail.com");
-        System.out.println("== : " + (same1 == same2) + ", equals: " + same1.equals(same2)
-                + ", hashCode рівні: " + (same1.hashCode() == same2.hashCode()));
-        System.out.println("Той самий телефон, інше ім'я, equals: " + same1.equals(samePhone));
-
-        System.out.println("\n6. Згенерований toString()");
-        System.out.println(customer);
-        System.out.println(table);
+    private static void printSummary(Path file, LoadResult result) {
+        System.out.println("  " + file + ": прочитано " + result.read() + ", додано " + result.added()
+                + ", відкинуто " + result.rejected().size());
     }
 }
